@@ -3,17 +3,23 @@ import azure.functions as func
 from azure.storage.queue import QueueServiceClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.vision.computervision import ComputerVisionClient
-from azure.ai.vision.computervision.models import VisualFeatureTypes
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
+import logging
 
-def index(message: func.QueueMessage):
+app = func.FunctionApp()
+
+@app.function_name(name="IndexFunc")
+@app.queue_trigger(arg_name="msg", queue_name="inputqueue",
+                   connection="storageAccountConnectionString")  # Queue trigger
+def IndexFunc(msg: func.QueueMessage):
     # Connect to Azure Cognitive Services for Computer Vision
     cognitive_services_endpoint = os.environ["CognitiveServicesEndpoint"]
     cognitive_services_key = os.environ["CognitiveServicesKey"]
     computer_vision_client = ComputerVisionClient(cognitive_services_endpoint, AzureKeyCredential(cognitive_services_key))
 
     # Process the message (image location)
-    image_location = message.get_body().decode('utf-8')
+    image_location = msg.get_body().decode('utf-8')
 
     # Analyze the image using Computer Vision
     image_analysis = computer_vision_client.analyze_image(image_location, visual_features=[VisualFeatureTypes.objects])
@@ -31,4 +37,4 @@ def index(message: func.QueueMessage):
     # Delete the message from the Azure Queue once processed
     queue_service_client = QueueServiceClient.from_connection_string(os.environ["AzureWebJobsStorage"])
     queue_client = queue_service_client.get_queue_client(os.environ["QueueName"])
-    queue_client.delete_message(message.id, message.pop_receipt)
+    queue_client.delete_message(msg.id, msg.pop_receipt)

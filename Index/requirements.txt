@@ -4,5 +4,7 @@
 
 azure-functions
 azure-storage-queue 
-azure-search-documents-indexes 
 azure-ai-formrecognizer 
+azure-search-documents
+azure-core
+azure-cognitiveservices-vision-computervision
