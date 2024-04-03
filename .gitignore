@@ -1,0 +1,5 @@
+local.settings.json
+.terraform
+.terraform.*
+terraform.tfstate.*
+terraform.tfstate
