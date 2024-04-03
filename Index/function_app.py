@@ -13,10 +13,10 @@ from azure.search.documents import SearchClient
 # Azure Cognitive Search settings
 search_service_name = "object-search"
 index_name = "azureblob-index"
-search_key = "mm6scwzV4h307dYYiNeDVrXehMRFH4SeFtsL5gvbMXAzSeCySCtX"
+search_key = os.environ['search_key']
 search_client = SearchClient(f"https://{search_service_name}.search.windows.net/", index_name, AzureKeyCredential(search_key))
 queue_name = os.environ["QueueName"]
-key = '6b129a68441e44baa72b62c89066ccfc'
+key = os.environ["key"]
 endpoint = 'https://objects-detection.cognitiveservices.azure.com/'
 sas_token = os.environ["sas_token"]
 # Configure Azure Cognitive Search credentials
